@@ -6,7 +6,8 @@
   ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-otConnect(host = "delayed1.opentick.com", port = 10015, login = FALSE, open = TRUE, platform = OT_PLATFORM_OT, platformPassword = "", ...)
+otConnect(host = "delayed1.opentick.com", port = 10015, login = FALSE,
+  open = TRUE, platform = OT$PLATFORM_OT, platformPassword = "", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
