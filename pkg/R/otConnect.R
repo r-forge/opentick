@@ -1,7 +1,7 @@
 'otConnect' <-
 function(host='delayed1.opentick.com', port=10015,
          login=FALSE, open=TRUE,
-         platform=OT_PLATFORM_OT, platformPassword='', ...) {
+         platform=OT$PLATFORM_OT, platformPassword='', ...) {
 
   # Add capability for connection to contain multiple hosts.  Then you can
   # try the other hosts if one fails.
