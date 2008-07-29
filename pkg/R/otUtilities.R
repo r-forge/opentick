@@ -10,7 +10,7 @@ function(connection, commandType, msgBody) {
   # Create Message Header
   # Message Type, Command Status, Reserved Bytes, Command Type, Request ID
   #msgHeader <- pack("C C x x V V", 1, 1, commandType, requestID)
-  msgHeader <- pack("C C x x V V", 1, 1, commandType, 1)
+  msgHeader <- pack("C C x x V V", 1, 1, commandType, connection$requestID+1)
   
   # Get Message Length
   msgLength <- pack("V",NROW(c(msgHeader,msgBody)))
@@ -24,6 +24,7 @@ function(connection, commandType, msgBody) {
   # Server Response Header
   # Message Type, Command Status, Reserved Bytes, Command Type, Request ID
   resHeader <- unpack('C C v V V', readBin(connection$connection, raw(), 12))
+  names(resHeader) <- c('msgType','cmdStatus','resvd','cmdType','requestID')
   
   # Server Response Body
   resBody <- readBin(connection$connection, raw(), resLength-12)

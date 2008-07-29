@@ -6,6 +6,6 @@ Date: 2008-06-01
 Author: Josh Ulrich
 Maintainer: Josh Ulrich <josh.m.ulrich@gmail.com>
 Description: Provide a native R interface to opentick real time and historical market data. Disclaimer: This software is not endorsed in any way by opentick corporation. The authors of this software are not affiliated with opentick corporation.
-Depends: pack
+Depends: pack, xts
 License: GPL-3
 LazyLoad: yes
