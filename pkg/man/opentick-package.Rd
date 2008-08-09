@@ -14,8 +14,8 @@ authors of this software are not affiliated with opentick corporation.
 \tabular{ll}{
 Package: \tab opentick\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2008-06-01\cr
+Version: \tab 0.1-1\cr
+Date: \tab 2008-08-01\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }

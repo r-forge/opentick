@@ -3,7 +3,7 @@
 # Distributed under GNU GPL version 3                                     #
 #-------------------------------------------------------------------------#
 
-'otHistData' <-
+'.otHistTicks' <-
 function(connection, exchange='Q', symbol='MSFT', dates=NULL,
   dataType='ohlc.day', interval=1) {
   
@@ -64,13 +64,21 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
     remain <- resBody[[2]]
 
     # Initialize results data.frame
-    result <- data.frame(
-      timeStamp=rep(0,nRows),
-      Open=rep(0,nRows),
-      High=rep(0,nRows),
-      Low=rep(0,nRows),
-      Close=rep(0,nRows),
-      Volume=rep(0,nRows) )
+    if( type == OT$HIST_OHL_TODAY ) {
+      result <- data.frame(
+        timeStamp=rep(0,nRows),
+        Open=rep(0,nRows),
+        High=rep(0,nRows),
+        Low=rep(0,nRows) )
+    } else {
+      result <- data.frame(
+        timeStamp=rep(0,nRows),
+        Open=rep(0,nRows),
+        High=rep(0,nRows),
+        Low=rep(0,nRows),
+        Close=rep(0,nRows),
+        Volume=rep(0,nRows) )
+    }
 
     # Loop over rows
     for(i in 1:(nRows+1)) {
@@ -85,6 +93,30 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
         loop <- FALSE
         break
       } else
+      # 1  Quote Tick Data
+      if( code == OT$HIST_TICK_QUOTE ) {
+        row <- unpack('V V d d A2 A A a*', remain)
+        result[i,] <- row[1:7]
+        remain <- row[[8]]
+      }
+      # 2  Market Maker Quote Tick Data
+      if( code == OT$HIST_TICK_MMQUOTE ) {
+        #row <- unpack('V d d d d a8 a*', remain)
+        #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
+        #remain <- row[[7]]
+      }
+      # 3  Trade Tick Data
+      if( code == OT$HIST_TICK_TRADE ) {
+        #row <- unpack('V d d d d a8 a*', remain)
+        #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
+        #remain <- row[[7]]
+      }
+      # 4  BBO Tick Data
+      if( code == OT$HIST_TICK_BBO ) {
+        #row <- unpack('V d d d d a8 a*', remain)
+        #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
+        #remain <- row[[7]]
+      }
       # 50 OHLC Data
       if( code == OT$HIST_CODE_OHLC ) {
         row <- unpack('V d d d d a8 a*', remain)
@@ -93,9 +125,9 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
       }
       # 51 Today's OHL Data
       if( code == OT$HIST_CODE_OHL_TODAY ) {
-        row <- unpack('V d d d a8 a*', remain)
-        result[i,] <- c(row[1:4],rawToNum(row[[5]],8))
-        remain <- row[[6]]
+        row <- unpack('V d d d d a8 a*', remain)
+        result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
+        remain <- row[[7]]
       }
     }
     
@@ -107,7 +139,7 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
   return(results)
 }
 
-'cancelHistData' <-
+'cancelHistTicks' <-
 function(connection, requestID, ...) {
   
   # Construct Message Body

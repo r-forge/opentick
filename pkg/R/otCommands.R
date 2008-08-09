@@ -22,11 +22,11 @@ function(connection, username=NULL, password=NULL) {
     password)         # 64 : Password
 
   # Transmit to OT Server
-  response <- transmit(connection, OT$LOGIN, msgBody)
-
-  # Need Error Handling
-  if( response$header[[2]] == 2 )
-    stop('login error')
+  reqID <- getRequestID()
+  sendRequest(connection, OT$LOGIN, reqID, msgBody)
+  
+  # Server response
+  response <- getResponse(connection, nullError=TRUE)
 
   # Parse Response Body
   # SessionID, redirect (boolean), redirect host, redirect port
@@ -54,17 +54,18 @@ function(connection, username=NULL, password=NULL) {
 'otLogout' <-
 function(connection) {
 
+  loggedIn(connection)
+  
   # Construct Message Body
   msgBody <-
     pack('a64', connection$sessionID)
 
   # Transmit to OT Server
-  response <- transmit(connection, OT$LOGOUT, msgBody)
-
-  # Parse Response Body
-  # should be empty
+  reqID <- getRequestID()
+  sendRequest(connection, OT$LOGOUT, reqID, msgBody)
   
-  # Need Error Handling
+  # Server response
+  response <- getResponse(connection)
 
   # Add sessionID and loggedIn value to otConnection Object
   connection$loggedIn <- FALSE
@@ -76,32 +77,43 @@ function(connection) {
 'otExchangeList' <-
 function(connection) {
 
+  loggedIn(connection)
+  
   # Construct Message Body
   msgBody <-
     pack('a64', connection$sessionID)
   
   # Transmit to OT Server
-  response <- transmit(connection, OT$REQUEST_LIST_EXCHANGES, msgBody)
-  
-  # Need Error Handling
-  
-  # Parse Server Response Body
-  resBody <- unpack('v/A v a*', response$body)
+  reqID <- getRequestID()
+  sendRequest(connection, OT$REQUEST_LIST_EXCHANGES, reqID, msgBody)
 
-  # Initialize results data.frame
-  results <- data.frame( code=rep(NA,resBody[[2]]), available=rep(NA,resBody[[2]]),
-                         title=rep(NA,resBody[[2]]), description=rep(NA,resBody[[2]]) )
+  results <- NULL
+  while(TRUE) {
+    
+    # Server response
+    response <- getResponse(connection)
+    if(is.null(response)) break
+  
+    # Parse Server Response Body
+    resBody <- unpack('v/A v a*', response$body)
 
-  # Get information for each exchange
-  remain <- resBody[[3]]
-  for(i in 1:resBody[[2]]) {
-    row <- unpack('A15 C v/A v/A a*', remain)
-    results[i,] <- row[1:4]
-    remain <- row[[5]]
+    # Initialize results data.frame
+    result <- data.frame( code=rep(NA,resBody[[2]]), available=rep(NA,resBody[[2]]),
+                          title=rep(NA,resBody[[2]]), description=rep(NA,resBody[[2]]) )
+
+    # Get information for each exchange
+    remain <- resBody[[3]]
+    for(i in 1:resBody[[2]]) {
+      row <- unpack('A15 C v/A v/A a*', remain)
+      result[i,] <- row[1:4]
+      remain <- row[[5]]
+    }
+
+    results <- rbind(results,result)
   }
   
   # Only keep subscription URL
-  resBody[2:3] <- NULL
+  #resBody[2:3] <- NULL
 
   return(results)
 }
