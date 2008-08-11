@@ -4,10 +4,14 @@
 #-------------------------------------------------------------------------#
 
 'otHistData' <-
-function(connection, exchange='Q', symbol='MSFT', dates=NULL,
+function(exchange='Q', symbol='MSFT', dates=NULL,
   dataType='ohlc.day', interval=1) {
   
-  loggedIn(connection)
+  loggedIn()
+  otReconnect()
+
+  # Create connection parameters
+  otPar <- getParams()
 
   # Handle dates
   if(is.null(dates)) {
@@ -37,26 +41,26 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
 
   # Construct Message Body
   msgBody <- pack('a64 a15 a15 x x V V C x v',
-    connection$sessionID, # Session ID
-    exchange,             # Exchange Code
-    symbol,               # Symbol Code
-    min(dates),           # Start Date
-    max(dates),           # End Date
-    type,                 # Data Type
-    interval)             # Interval Value
+    otPar$sessionID,  # Session ID
+    exchange,         # Exchange Code
+    symbol,           # Symbol Code
+    min(dates),       # Start Date
+    max(dates),       # End Date
+    type,             # Data Type
+    interval)         # Interval Value
 
   # Transmit to OT Server
   reqID <- getRequestID()
-  sendRequest(connection, OT$REQUEST_HIST_DATA, reqID, msgBody)
+  sendRequest(OT$REQUEST_HIST_DATA, reqID, msgBody)
 
-  on.exit(cancelHistData(connection,reqID,ok=1004))
+  on.exit(cancelHistData(reqID,ok=1004))
 
   results <- NULL
   loop <- TRUE
   while(loop) {
     
     # Server response
-    response <- getResponse(connection, nullError=TRUE)
+    response <- getResponse(nullError=TRUE)
   
     # Parse Server Response Body
     resBody <- unpack('V a*', response$body)
@@ -108,19 +112,22 @@ function(connection, exchange='Q', symbol='MSFT', dates=NULL,
 }
 
 'cancelHistData' <-
-function(connection, requestID, ...) {
+function(requestID, ...) {
   
+  # Create connection parameters
+  otPar <- getParams()
+
   # Construct Message Body
   msgBody <- pack('a64 V',
-    connection$sessionID, # Session ID
-    requestID)            # Request ID
+    otPar$sessionID,  # Session ID
+    requestID)        # Request ID
   
   # Transmit to OT Server
   reqID <- getRequestID()
-  sendRequest(connection, OT$CANCEL_HIST_DATA, reqID, msgBody)
+  sendRequest(OT$CANCEL_HIST_DATA, reqID, msgBody)
   
   # Server response
-  response <- getResponse(connection, nullError=FALSE, ...)
+  response <- getResponse(nullError=FALSE, ...)
 
   return(invisible())
 }

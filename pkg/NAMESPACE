@@ -1,5 +1,7 @@
 #exportPattern('(^[^(OT_)|(\\.)])|([^.otConnection]$)')
 exportPattern('^ot*')
+export('.otConnection')
+export('.otParams')
 
 S3method(print,otConnection)
 S3method(str,otConnection)

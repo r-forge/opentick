@@ -6,12 +6,11 @@
   ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-otLogout(connection)
+otLogout()
 }
 %- maybe also 'usage' for other objects documented here.
-\arguments{
-  \item{connection}{ ~~Describe \code{connection} here~~ }
-}
+%\arguments{
+%}
 \details{
   ~~ If necessary, more details than the description above ~~
 }

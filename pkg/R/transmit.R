@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------#
 
 'sendRequest' <-
-function(connection, commandType, requestID, msgBody) {
+function(commandType, requestID, msgBody) {
 
   # Create Message Header
   msgHeader <-
@@ -18,25 +18,25 @@ function(connection, commandType, requestID, msgBody) {
   msgLength <- pack("V",NROW(c(msgHeader,msgBody)))
   
   # Send Message
-  writeBin(c(msgLength,msgHeader,msgBody), connection$connection)
+  writeBin(c(msgLength,msgHeader,msgBody), getSocket())
 
   return(invisible())
 }
 
 'getResponse' <-
-function(connection, nullError=TRUE, ...) {
+function(nullError=TRUE, ...) {
   
   # Server Response Length
-  msgLen <- readBin(connection$connection, integer(), size=4)
+  msgLen <- readBin(getSocket(), integer(), size=4)
   
   if( length(msgLen) ) {
     # Server Response Header
     # Message Type, Command Status, Reserved Bytes, Command Type, Request ID
-    header <- unpack('C C v V V', readBin(connection$connection, raw(), 12))
+    header <- unpack('C C v V V', readBin(getSocket(), raw(), 12))
     names(header) <- c('msgType','cmdStatus','resvd','cmdType','requestID')
 
     # Server Response Body
-    body <- readBin(connection$connection, raw(), msgLen-12)
+    body <- readBin(getSocket(), raw(), msgLen-12)
 
     # Check for errors
     errorHandler(header, body, ...)

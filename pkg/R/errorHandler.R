@@ -23,11 +23,13 @@ function(header, body, ok=NULL, customMessage=FALSE) {
 }
 
 'loggedIn' <-
-function(connection) {
+function() {
 
-  if(!connection$loggedIn) {
-    stop('Not logged in', call.=FALSE)
-  } else {
+  otPar <- getParams()
+  
+  if(otPar$loggedIn) {
     return(invisible())
+  } else {
+    stop('Not logged in', call.=FALSE)
   }
 }

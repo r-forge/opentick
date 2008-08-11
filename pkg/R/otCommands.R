@@ -4,94 +4,104 @@
 #-------------------------------------------------------------------------#
 
 'otLogin' <-
-function(connection, username=NULL, password=NULL) {
+function(username=NULL, password=NULL) {
 
   # Prompt for username and password
   if(is.null(username)) username <- readLines(n=1)
   if(is.null(password)) password <- readLines(n=1)
   
+  # Connectoin parameters
+  otPar <- getParams()
+
   # Construct Message Body
   msgBody <-
   pack("v C C a16 a6 a64 a64",
-    OT$PROTOCOL_VER,  #  2 : OT Protocol Version
-    getOS(),          #  1 : Operating System ID
-    OT$PLATFORM_OT,   #  1 : Platform ID
-    '',               # 16 : Platform ID password
-    '',               #  6 : MAC address
-    username,         # 64 : Username
-    password)         # 64 : Password
+    OT$PROTOCOL_VER,         #  2 : OT Protocol Version
+    getOS(),                 #  1 : Operating System ID
+    otPar$platform,          #  1 : Platform ID
+    otPar$platformPassword,  # 16 : Platform ID password
+    '',                      #  6 : MAC address
+    username,                # 64 : Username
+    password)                # 64 : Password
 
   # Transmit to OT Server
   reqID <- getRequestID()
-  sendRequest(connection, OT$LOGIN, reqID, msgBody)
-  
+  sendRequest(OT$LOGIN, reqID, msgBody)
+
   # Server response
-  response <- getResponse(connection, nullError=TRUE)
+  response <- getResponse(nullError=TRUE)
 
   # Parse Response Body
-  # SessionID, redirect (boolean), redirect host, redirect port
   resBody <- unpack('A64 C A64 v', response$body)
   names(resBody) <- c('sessionID','redirect','redirectHost','redirectPort')
-  
-  # Add sessionID and loggedIn value to otConnection Object
-  #conObj <- unlist(strsplit(deparse(match.call())," = |,"))
-  #conObj <- conObj[grep('connection',conObj)+1]
-  #assign(paste(conObj,'$loggedIn',sep=''), TRUE, envir=sys.frame())
-  #assign(paste(conObj,'$sessionID',sep=''), resBody$sessionID, envir=sys.frame())
-  connection$loggedIn <- TRUE
-  connection$sessionID <- resBody$sessionID
+
+  # Update connection parameters
+  otPar$redirect <- as.logical(resBody$redirect)
+  otPar$redirectHost <- resBody$redirectHost
+  otPar$redirectPort <- resBody$redirectPort
+  otPar$username <- username
+  otPar$password <- password
+  otPar$loggedIn <- TRUE
+  otPar$sessionID <- resBody$sessionID
+  setParams(otPar)
 
   # Redirect?
-  if( resBody$redirect ) {
-    #assign(paste(conObj,'$host',sep=''), resBody$redirectHost, envir=sys.frame())
-    #assign(paste(conObj,'$port',sep=''), resBody$redirectPort, envir=sys.frame())
-    connection$host <- resBody$redirectHost
-    connection$port <- resBody$redirectPort
+  if( otPar$redirect ) {
+    .otAddHost(otPar$redirectHost,otPar$redirectPort)
+    otLogin(username,password)
   }
-  return(connection)
+  
+  return(invisible(1))
 }
 
 'otLogout' <-
-function(connection) {
+function() {
 
-  loggedIn(connection)
+  loggedIn()
   
+  # Connectoin parameters
+  otPar <- getParams()
+
   # Construct Message Body
   msgBody <-
-    pack('a64', connection$sessionID)
+    pack('a64', otPar$sessionID)
 
   # Transmit to OT Server
   reqID <- getRequestID()
-  sendRequest(connection, OT$LOGOUT, reqID, msgBody)
+  sendRequest(OT$LOGOUT, reqID, msgBody)
   
   # Server response
-  response <- getResponse(connection)
+  response <- getResponse()
 
-  # Add sessionID and loggedIn value to otConnection Object
-  connection$loggedIn <- FALSE
-  connection$sessionID <- ''
+  # Add sessionID and loggedIn values to connection parameters
+  otPar$loggedIn <- FALSE
+  otPar$sessionID <- ''
+  setParams()
 
-  return(connection)
+  return(invisible(1))
 }
 
 'otExchangeList' <-
-function(connection) {
+function() {
 
-  loggedIn(connection)
+  loggedIn()
   
+  # Connectoin parameters
+  otPar <- getParams()
+
   # Construct Message Body
   msgBody <-
-    pack('a64', connection$sessionID)
+    pack('a64', otPar$sessionID)
   
   # Transmit to OT Server
   reqID <- getRequestID()
-  sendRequest(connection, OT$REQUEST_LIST_EXCHANGES, reqID, msgBody)
+  sendRequest(OT$REQUEST_LIST_EXCHANGES, reqID, msgBody)
 
   results <- NULL
-  while(TRUE) {
+  #while(TRUE) {
     
     # Server response
-    response <- getResponse(connection)
+    response <- getResponse()
     if(is.null(response)) break
   
     # Parse Server Response Body
@@ -110,10 +120,7 @@ function(connection) {
     }
 
     results <- rbind(results,result)
-  }
-  
-  # Only keep subscription URL
-  #resBody[2:3] <- NULL
+  #}
 
   return(results)
 }

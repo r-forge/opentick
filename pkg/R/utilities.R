@@ -35,6 +35,11 @@ function() {
 
 'getRequestID' <-
 function() {
-  return(unclass(Sys.time()))
+  
+  x <- getParams()
+  x$requestID <- x$requestID + 1
+  setParams(x)
+
+  return(x$requestID)
 }
 

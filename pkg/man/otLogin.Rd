@@ -6,11 +6,10 @@
   ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-otLogin(connection, username = NULL, password = NULL)
+otLogin(username = NULL, password = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{connection}{ ~~Describe \code{connection} here~~ }
   \item{username}{ ~~Describe \code{username} here~~ }
   \item{password}{ ~~Describe \code{password} here~~ }
 }
