@@ -1,3 +1,8 @@
+#-------------------------------------------------------------------------#
+# opentick R package, copyright (C) Joshua M. Ulrich, 2007-2008           #
+# Distributed under GNU GPL version 3                                     #
+#-------------------------------------------------------------------------#
+
 'otConnect' <-
 function(host='delayed1.opentick.com', port=10015,
          platform=OT$PLATFORM_OT, platformPassword='', ...) {
@@ -57,8 +62,8 @@ function(host='delayed1.opentick.com', port=10015,
 function() {
   
   # Try a request that *will* fail
-  req <- cancelHistData(0, ok=1004)
-  
+  req <- cancelRequest(OT$CANCEL_HIST_DATA,0,ok=1004) 
+
   if(is.null(req)) {
     
     # Create connection parameters
@@ -72,6 +77,84 @@ function() {
     return(invisible())
 
   }
+}
+
+'otLogin' <-
+function(username=NULL, password=NULL) {
+
+  # Prompt for username and password
+  if(is.null(username)) username <- readLines(n=1)
+  if(is.null(password)) password <- readLines(n=1)
+  
+  # Connectoin parameters
+  otPar <- getParams()
+
+  # Construct Message Body
+  msgBody <-
+  pack("v C C a16 a6 a64 a64",
+    OT$PROTOCOL_VER,         #  2 : OT Protocol Version
+    getOS(),                 #  1 : Operating System ID
+    otPar$platform,          #  1 : Platform ID
+    otPar$platformPassword,  # 16 : Platform ID password
+    '',                      #  6 : MAC address
+    username,                # 64 : Username
+    password)                # 64 : Password
+
+  # Transmit to OT Server
+  reqID <- getRequestID()
+  sendRequest(OT$LOGIN, reqID, msgBody)
+
+  # Server response
+  response <- getResponse(nullError=TRUE)
+
+  # Parse Response Body
+  resBody <- unpack('A64 C A64 v', response$body)
+  names(resBody) <- c('sessionID','redirect','redirectHost','redirectPort')
+
+  # Update connection parameters
+  otPar$redirect <- as.logical(resBody$redirect)
+  otPar$redirectHost <- resBody$redirectHost
+  otPar$redirectPort <- resBody$redirectPort
+  otPar$username <- username
+  otPar$password <- password
+  otPar$loggedIn <- TRUE
+  otPar$sessionID <- resBody$sessionID
+  setParams(otPar)
+
+  # Redirect?
+  if( otPar$redirect ) {
+    .otAddHost(otPar$redirectHost,otPar$redirectPort)
+    otLogin(username,password)
+  }
+  
+  return(invisible(1))
+}
+
+'otLogout' <-
+function() {
+
+  loggedIn()
+  
+  # Connectoin parameters
+  otPar <- getParams()
+
+  # Construct Message Body
+  msgBody <-
+    pack('a64', otPar$sessionID)
+
+  # Transmit to OT Server
+  reqID <- getRequestID()
+  sendRequest(OT$LOGOUT, reqID, msgBody)
+  
+  # Server response
+  response <- getResponse()
+
+  # Add sessionID and loggedIn values to connection parameters
+  otPar$loggedIn <- FALSE
+  otPar$sessionID <- ''
+  setParams()
+
+  return(invisible(1))
 }
 
 '.otAddHost' <-

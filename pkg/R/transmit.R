@@ -51,3 +51,23 @@ function(nullError=TRUE, ...) {
   }
 }
 
+'cancelRequest' <-
+function(requestID, cmdType, ...) {
+  
+  # Create connection parameters
+  otPar <- getParams()
+
+  # Construct Message Body
+  msgBody <- pack('a64 V',
+    otPar$sessionID,  # Session ID
+    requestID)        # Request ID
+  
+  # Transmit to OT Server
+  reqID <- getRequestID()
+  sendRequest(cmdType, reqID, msgBody)
+  
+  # Server response
+  response <- getResponse(nullError=FALSE, ...)
+
+  return(invisible())
+}
