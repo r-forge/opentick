@@ -62,7 +62,7 @@ function(host='delayed1.opentick.com', port=10015,
 function() {
   
   # Try a request that *will* fail
-  req <- cancelRequest(OT$CANCEL_HIST_DATA,0,ok=1004) 
+  req <- cancelRequest(OT$CANCEL_HIST_DATA,0) 
 
   if(is.null(req)) {
     

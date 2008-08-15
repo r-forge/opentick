@@ -66,11 +66,15 @@ function(exchange) {
   sendRequest(OT$REQUEST_LIST_SYMBOLS, reqID, msgBody)
 
   results <- NULL
-  #while(TRUE) {
-    
+  loop <- TRUE
+  while(loop) {
+
     # Server response
     response <- getResponse()
-    if(is.null(response)) break
+    if(is.null(response)) {
+      loop <- FALSE
+      break
+    }
   
     # Parse Server Response Body
     resBody <- unpack('v a*', response$body)
@@ -80,16 +84,22 @@ function(exchange) {
       currencyID=rep(NA,resBody[[1]]), symbolCode=rep(NA,resBody[[1]]),
       type=rep(NA,resBody[[1]]), company=rep(NA,resBody[[1]]) )
 
-    # Get information for each exchange
-    remain <- resBody[[2]]
-    for(i in 1:resBody[[1]]) {
-      row <- unpack('A4 A15 C v/A a*', remain)
-      result[i,] <- row[1:4]
-      remain <- row[[5]]
+    # Check if there are any rows
+    if(resBody[[1]]) {
+      remain <- resBody[[2]]
+      # Get information for each exchange
+      for(i in 1:resBody[[1]]) {
+        row <- unpack('A4 A15 C v/A a*', remain)
+        result[i,] <- row[1:4]
+        remain <- row[[5]]
+      }
+    } else {
+      loop <- FALSE
+      break
     }
 
     results <- rbind(results,result)
-  #}
+  }
 
   return(results)
 }
