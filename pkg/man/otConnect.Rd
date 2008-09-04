@@ -1,76 +1,36 @@
 \name{otConnect}
 \alias{otConnect}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{ Connect to opentick servers }
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Function to establish connection to opentick servers.
 }
 \usage{
 otConnect(host = "delayed1.opentick.com", port = 10015,
   platform = OT$PLATFORM_OT, platformPassword = "", ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{host}{ ~~Describe \code{host} here~~ }
-  \item{port}{ ~~Describe \code{port} here~~ }
-  \item{platform}{ ~~Describe \code{platform} here~~ }
-  \item{platformPassword}{ ~~Describe \code{platformPassword} here~~ }
-  \item{\dots}{ ~~Describe \code{\dots} here~~ }
+  \item{host}{ Hostname of server to connect to; must align with \code{port} argument. }
+  \item{port}{ Port number of server to connect to; must align with \code{host} argument. }
+  \item{platform}{ Platform Code. }
+  \item{platformPassword}{ Platform Password. }
+  \item{\dots}{ Further arguments to connection object (not currently implemented). }
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  This function establishes a connection to the opentick servers.
+  It connects to both real-time and delayed servers.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  Returns the number one '1' invisibly.\cr
+  Creates \code{.otConnection} in the opentick namespace.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(host='delayed1.opentick.com', port=10015,
-         login=FALSE, open=TRUE,
-         platform=OT_PLATFORM_OT, platformPassword='', ...) {
-
-  # Add capability for connection to contain multiple hosts.  Then you can
-  # try the other hosts if one fails.
-  
-  # Open connection
-  con <- socketConnection(host[1], port, open='r+b', blocking=TRUE)
-
-  if(login) {
-    stop('This feature not currently implemented')
-  } else {
-    username <- ''
-    password <- ''
-    requestID <- 0
-  }
-  
-  # Return connection object
-  structure(list(connection=con,
-                 host=host,
-                 port=port,
-                 platform=platform,
-                 platformPassword=platformPassword,
-                 username=username,
-                 password=password,
-                 loggedIn=login,
-                 requestID=requestID),
-            class=c('otConnection'))
-  }
-}
+%\references{ ~put references to the literature/web site here ~ }
+\author{ Josh Ulrich }
+%\note{ ~~further notes~~ 
+ %~Make other sections like Warning with \section{Warning }{....} ~
+%}
+%\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+%\examples{
+%}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ utilities }
+\keyword{ connection }

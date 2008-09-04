@@ -63,7 +63,7 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
     response <- getResponse(nullError=TRUE)
   
     # Parse Server Response Body
-    resBody <- unpack('V a*', response$body)
+    resBody <- unpack('V H*', response$body)
     nRows <- resBody[[1]]-1  # REMOVE EOD ROW
     remain <- resBody[[2]]
 
@@ -80,7 +80,7 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
     for(i in 1:(nRows+1)) {
       
       # Data Type Code
-      remain <- unpack('C a*', remain)
+      remain <- unpack('C H*', remain)
       code <- remain[[1]]
       remain <- remain[[2]]
 
@@ -91,13 +91,13 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
       } else
       # 50 OHLC Data
       if( code == OT$HIST_CODE_OHLC ) {
-        row <- unpack('V d d d d a8 a*', remain)
+        row <- unpack('V d d d d a8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }
       # 51 Today's OHL Data
       if( code == OT$HIST_CODE_OHL_TODAY ) {
-        row <- unpack('V d d d a8 a*', remain)
+        row <- unpack('V d d d a8 H*', remain)
         result[i,] <- c(row[1:4],rawToNum(row[[5]],8))
         remain <- row[[6]]
       }
@@ -170,7 +170,7 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
     response <- getResponse(nullError=TRUE)
   
     # Parse Server Response Body
-    resBody <- unpack('V a*', response$body)
+    resBody <- unpack('V H*', response$body)
     nRows <- resBody[[1]]-1  # REMOVE EOD ROW
     remain <- resBody[[2]]
 
@@ -195,7 +195,7 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
     for(i in 1:(nRows+1)) {
       
       # Data Type Code
-      remain <- unpack('C a*', remain)
+      remain <- unpack('C H*', remain)
       code <- remain[[1]]
       remain <- remain[[2]]
 
@@ -206,37 +206,37 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
       } else
       # 1  Quote Tick Data
       if( code == OT$HIST_TICK_QUOTE ) {
-        row <- unpack('V V d d A2 A A a*', remain)
+        row <- unpack('V V d d A2 A A H*', remain)
         result[i,] <- row[1:7]
         remain <- row[[8]]
       }
       # 2  Market Maker Quote Tick Data
       if( code == OT$HIST_TICK_MMQUOTE ) {
-        #row <- unpack('V d d d d a8 a*', remain)
+        #row <- unpack('V d d d d a8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 3  Trade Tick Data
       if( code == OT$HIST_TICK_TRADE ) {
-        #row <- unpack('V d d d d a8 a*', remain)
+        #row <- unpack('V d d d d a8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 4  BBO Tick Data
       if( code == OT$HIST_TICK_BBO ) {
-        #row <- unpack('V d d d d a8 a*', remain)
+        #row <- unpack('V d d d d a8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 50 OHLC Data
       if( code == OT$HIST_CODE_OHLC ) {
-        row <- unpack('V d d d d a8 a*', remain)
+        row <- unpack('V d d d d a8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }
       # 51 Today's OHL Data
       if( code == OT$HIST_CODE_OHL_TODAY ) {
-        row <- unpack('V d d d d a8 a*', remain)
+        row <- unpack('V d d d d a8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }

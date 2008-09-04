@@ -28,7 +28,7 @@ function() {
     if(is.null(response)) break
   
     # Parse Server Response Body
-    resBody <- unpack('v/A v a*', response$body)
+    resBody <- unpack('v/A v H*', response$body)
 
     # Initialize results data.frame
     result <- data.frame( code=rep(NA,resBody[[2]]), available=rep(NA,resBody[[2]]),
@@ -37,7 +37,7 @@ function() {
     # Get information for each exchange
     remain <- resBody[[3]]
     for(i in 1:resBody[[2]]) {
-      row <- unpack('A15 C v/A v/A a*', remain)
+      row <- unpack('A15 C v/A v/A H*', remain)
       result[i,] <- row[1:4]
       remain <- row[[5]]
     }
@@ -77,7 +77,7 @@ function(exchange) {
     }
   
     # Parse Server Response Body
-    resBody <- unpack('v a*', response$body)
+    resBody <- unpack('v H*', response$body)
 
     # Initialize results data.frame
     result <- data.frame(
@@ -89,7 +89,7 @@ function(exchange) {
       remain <- resBody[[2]]
       # Get information for each exchange
       for(i in 1:resBody[[1]]) {
-        row <- unpack('A4 A15 C v/A a*', remain)
+        row <- unpack('A4 A15 C v/A H*', remain)
         result[i,] <- row[1:4]
         remain <- row[[5]]
       }
