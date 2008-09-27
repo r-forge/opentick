@@ -29,15 +29,15 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
       'week','month','year','today'))
   type <-
     switch(dataType,
-      raw.tick   = OT$HIST_RAW_TICKS,
-      ohlc.tick  = OT$HIST_OHLC_TICK_BASED,
-      ohlc.min   = OT$HIST_OHLC_MINUTELY,
-      ohlc.hour  = OT$HIST_OHLC_HOURLY,
-      ohlc.day   = OT$HIST_OHLC_DAILY,
-      ohlc.week  = OT$HIST_OHLC_WEEKLY,
-      ohlc.month = OT$HIST_OHLC_MONTHLY,
-      ohlc.year  = OT$HIST_OHLC_YEARLY,
-      ohlc.today = OT$HIST_OHL_TODAY )
+      raw.tick = OT$HIST_RAW_TICKS,
+      tick     = OT$HIST_OHLC_TICK_BASED,
+      min      = OT$HIST_OHLC_MINUTELY,
+      hour     = OT$HIST_OHLC_HOURLY,
+      day      = OT$HIST_OHLC_DAILY,
+      week     = OT$HIST_OHLC_WEEKLY,
+      month    = OT$HIST_OHLC_MONTHLY,
+      year     = OT$HIST_OHLC_YEARLY,
+      today    = OT$HIST_OHL_TODAY )
 
   # Construct Message Body
   msgBody <- pack('a64 a15 a15 x x V V C x v',
@@ -91,13 +91,13 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
       } else
       # 50 OHLC Data
       if( code == OT$HIST_CODE_OHLC ) {
-        row <- unpack('V d d d d a8 H*', remain)
+        row <- unpack('V d d d d H8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }
       # 51 Today's OHL Data
       if( code == OT$HIST_CODE_OHL_TODAY ) {
-        row <- unpack('V d d d a8 H*', remain)
+        row <- unpack('V d d d H8 H*', remain)
         result[i,] <- c(row[1:4],rawToNum(row[[5]],8))
         remain <- row[[6]]
       }
@@ -212,31 +212,31 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
       }
       # 2  Market Maker Quote Tick Data
       if( code == OT$HIST_TICK_MMQUOTE ) {
-        #row <- unpack('V d d d d a8 H*', remain)
+        #row <- unpack('V d d d d H8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 3  Trade Tick Data
       if( code == OT$HIST_TICK_TRADE ) {
-        #row <- unpack('V d d d d a8 H*', remain)
+        #row <- unpack('V d d d d H8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 4  BBO Tick Data
       if( code == OT$HIST_TICK_BBO ) {
-        #row <- unpack('V d d d d a8 H*', remain)
+        #row <- unpack('V d d d d H8 H*', remain)
         #result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         #remain <- row[[7]]
       }
       # 50 OHLC Data
       if( code == OT$HIST_CODE_OHLC ) {
-        row <- unpack('V d d d d a8 H*', remain)
+        row <- unpack('V d d d d H8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }
       # 51 Today's OHL Data
       if( code == OT$HIST_CODE_OHL_TODAY ) {
-        row <- unpack('V d d d d a8 H*', remain)
+        row <- unpack('V d d d d H8 H*', remain)
         result[i,] <- c(row[1:5],rawToNum(row[[6]],8))
         remain <- row[[7]]
       }

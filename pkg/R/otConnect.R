@@ -63,7 +63,7 @@ function() {
   
   # Try a request that *will* fail
   req <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)), silent=TRUE)
-  Sys.sleep(.1)
+  Sys.sleep(1)
   req <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)), silent=TRUE)
 
   if(inherits(req,'try-error')) {
