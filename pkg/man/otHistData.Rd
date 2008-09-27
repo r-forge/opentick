@@ -11,7 +11,7 @@ otHistData(exchange='Q', symbol='MSFT', dates=NULL,
 \arguments{
   \item{exchange}{Exchange code.}
   \item{symbol}{Symbol code.}
-  \item{dates}{Start and end dates (order does not matter).}
+  \item{dates}{A vector containing start and end dates (order does not matter).}
   \item{dataType}{'raw.tick' = raw ticks\cr
                   'tick' = tick-based OHLC\cr
                   'min' = minutely OHLC\cr
@@ -41,11 +41,6 @@ otHistData(exchange='Q', symbol='MSFT', dates=NULL,
 %}
 \seealso{ \code{\link{otListExchanges}} and \code{\link{otListSymbols}} 
   provide exchange and symbols codes, respectively. }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-}
+%\examples{
+%}
 \keyword{ ts }

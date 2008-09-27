@@ -1,37 +1,32 @@
 \name{otListExchanges}
 \alias{otListExchanges}
-\title{ Historical Price Data }
+\title{ List opentick exchanges }
 \description{
-  Request historical OHLC and tick price and volume series.
+  Function to list all opentick exchanges.
 }
 \usage{
 otListExchanges()
 }
 %\arguments{
 %}
-\details{
-  ~~ If necessary, more details than the description above ~~
-}
+%\details{
+%}
 \value{
-  An xts object containing the columns below:
-  \item{Open}{Open price for interval.}
-  \item{High}{High price for interval.}
-  \item{Low}{Low price for interval.}
-  \item{Close}{Close price for interval (not returned for 'today' requests).}
-  \item{Volume}{Volume for interval (not returned for 'today' requests).}
+  A data.frame containing the columns below:
+  \item{code}{Exchange code}
+  \item{available}{Exchange availability flag: 1=available, 2=not available}
+  \item{title}{Exchange title}
+  \item{description}{Exchange description}
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{
+  \url{http://www.opentick.com/dokuwiki/doku.php?id=general:exchange_codes}
+}
 \author{ Josh Ulrich }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
+\note{
+  The URL in the references section lists available products and
+  the exchange codes that are available with them.
 }
 \seealso{ \code{\link{otListSymbols}} provides symbols codes. }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-}
+%\examples{
+%}
 \keyword{ ts }

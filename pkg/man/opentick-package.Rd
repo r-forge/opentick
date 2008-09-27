@@ -21,7 +21,7 @@ LazyLoad: \tab yes\cr
 }
 }
 \author{
-Josh Ulrich
+Josh Ulrich\cr
 Maintainer: Josh Ulrich <josh.m.ulrich@gmail.com>
 }
 %\references{

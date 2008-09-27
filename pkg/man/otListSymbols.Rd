@@ -1,38 +1,36 @@
 \name{otListSymbols}
 \alias{otListSymbols}
-\title{ Historical Price Data }
+\title{ List opentick symbols }
 \description{
-  Request historical OHLC and tick price and volume series.
+  Function to list all opentick symbols for a given exchange.
 }
 \usage{
 otListSymbols(exchange)
 }
 \arguments{
-  \item{exchange}{Exchange code.}
+  \item{exchange}{ Exchange code }
 }
-\details{
-  ~~ If necessary, more details than the description above ~~
-}
+%\details{
+%}
 \value{
-  An xts object containing the columns below:
-  \item{Open}{Open price for interval.}
-  \item{High}{High price for interval.}
-  \item{Low}{Low price for interval.}
-  \item{Close}{Close price for interval (not returned for 'today' requests).}
-  \item{Volume}{Volume for interval (not returned for 'today' requests).}
+  A data.frame containing the columns below:
+  \item{cyrrencyID}{The currency the symbol is denominated in}
+  \item{symbolCode}{The code for the symbol}
+  \item{type}{Instrument Type: 1=Equity, 2=Index, 3=Option, 4=Future}
+  \item{company}{The company name}
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{
+  \url{http://www.opentick.com/dokuwiki/doku.php?id=general:symbol_formats}
+  \url{http://www.opentick.com/dokuwiki/doku.php?id=general:common_symbols}
+  \url{http://www.opentick.com/index.php?app=search&event=symbols}
+}
 \author{ Josh Ulrich }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
+\note{
+  The URL in below lists all the available products and
+  the exchange codes that are available with them.\cr
+  \url{http://www.opentick.com/dokuwiki/doku.php?id=general:exchange_codes}
 }
 \seealso{ \code{\link{otListExchanges}} provides exchange codes. }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-}
+%\examples{
+%}
 \keyword{ ts }

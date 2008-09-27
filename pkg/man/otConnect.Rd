@@ -23,12 +23,21 @@ otConnect(host = "delayed1.opentick.com", port = 10015,
   Returns the number one '1' invisibly.\cr
   Creates \code{.otConnection} in the opentick namespace.
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{ \url{http://www.opentick.com/dokuwiki/doku.php?id=general:opentick_servers} }
 \author{ Josh Ulrich }
-%\note{ ~~further notes~~ 
- %~Make other sections like Warning with \section{Warning }{....} ~
-%}
-%\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\note{
+  The available servers are listed below.  Please see the URL in the
+  references section for the most current list of servers.\cr
+  \tabular{lll}{
+  Hostname \tab Real-time port \tab Delayed port\cr
+  feed1.opentick.com \tab 10010 \tab NA\cr
+  feed2.opentick.com \tab 10010 \tab NA\cr
+  delayed1.opentick.com \tab NA \tab 10015\cr
+  delayed2.opentick.com \tab NA \tab 10015\cr
+  }
+  If connecting to a delayed datafeed, all data is delayed 20 minutes.
+}
+\seealso{ \code{\link{otLogin}}, \code{\link{otLogout}} }
 %\examples{
 %}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
