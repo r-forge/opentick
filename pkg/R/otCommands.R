@@ -7,7 +7,7 @@
 function() {
 
   loggedIn()
-  otReconnect()
+  .otReconnect()
 
   # Connectoin parameters
   otPar <- getParams()
@@ -52,7 +52,7 @@ function() {
 function(exchange) {
 
   loggedIn()
-  otReconnect()
+  .otReconnect()
 
   # Connectoin parameters
   otPar <- getParams()

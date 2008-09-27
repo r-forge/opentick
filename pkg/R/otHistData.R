@@ -8,7 +8,7 @@ function(exchange='Q', symbol='MSFT', dates=NULL,
   dataType='day', interval=1) {
   
   loggedIn()
-  otReconnect()
+  .otReconnect()
 
   # Create connection parameters
   otPar <- getParams()

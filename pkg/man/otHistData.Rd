@@ -23,9 +23,9 @@ otHistData(exchange='Q', symbol='MSFT', dates=NULL,
                   'today' = daily OHL for current day}
   \item{interval}{Interval value, with a default of one.}
 }
-\details{
-  ~~ If necessary, more details than the description above ~~
-}
+%\details{
+%  ~~ If necessary, more details than the description above ~~
+%}
 \value{
   An xts object containing the columns below:
   \item{Open}{Open price for interval.}
@@ -36,10 +36,9 @@ otHistData(exchange='Q', symbol='MSFT', dates=NULL,
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{ Josh Ulrich }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
+%\note{ ~~further notes~~ 
+% ~Make other sections like Warning with \section{Warning }{....} ~
+%}
 \seealso{ \code{\link{otListExchanges}} and \code{\link{otListSymbols}} 
   provide exchange and symbols codes, respectively. }
 \examples{

@@ -58,13 +58,15 @@ function(host='delayed1.opentick.com', port=10015,
   return(invisible(1))
 }
 
-'otReconnect' <-
+'.otReconnect' <-
 function() {
   
   # Try a request that *will* fail
-  req <- cancelRequest(OT$CANCEL_HIST_DATA,0) 
+  req <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)), silent=TRUE)
+  Sys.sleep(.1)
+  req <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)), silent=TRUE)
 
-  if(is.null(req)) {
+  if(inherits(req,'try-error')) {
     
     # Create connection parameters
     otPar <- getParams()
