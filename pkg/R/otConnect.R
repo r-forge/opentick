@@ -4,8 +4,7 @@
 #-------------------------------------------------------------------------#
 
 'otConnect' <-
-function(host='delayed1.opentick.com', port=10015,
-         platform=OT$PLATFORM_OT, platformPassword='', ...) {
+function(host='delayed1.opentick.com', port=10015, ...) {
 
   # Make sure host/port args agree
   host <- match.arg(host, c('feed1.opentick.com','feed2.opentick.com',
@@ -23,8 +22,8 @@ function(host='delayed1.opentick.com', port=10015,
   otPar <- getParams()
   otPar$host <- host
   otPar$port <- port
-  otPar$platform <- platform
-  otPar$platformPassword <- platformPassword
+  otPar$platform <- OT$PLATFORM_OT
+  otPar$platformPassword <- ''
 
   # Get environment
   env <- as.environment("package:opentick")
@@ -101,8 +100,11 @@ function() {
   if(!open) {
     # Create connection parameters
     otPar <- getParams()
+    # Make sure old connection is closed
     .otDisconnect()
+    # Make a new connection
     otConnect()
+    # Login to new connection
     otLogin(otPar$username,otPar$password)
   } else {
     return(invisible())
@@ -189,6 +191,8 @@ function() {
   otPar$sessionID <- ''
   setParams()
 
+  .otDisconnect()
+  
   return(invisible(1))
 }
 

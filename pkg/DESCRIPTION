@@ -2,6 +2,7 @@ Package: opentick
 Type: Package
 Title: R API to opentick databases
 Version: 0.1-1
+Revision: 15
 Date: 2008-09-27
 Author: Josh Ulrich
 Maintainer: Josh Ulrich <josh.m.ulrich@gmail.com>

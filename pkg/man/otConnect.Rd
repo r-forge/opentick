@@ -5,14 +5,11 @@
   Function to establish connection to opentick servers.
 }
 \usage{
-otConnect(host = "delayed1.opentick.com", port = 10015,
-  platform = OT$PLATFORM_OT, platformPassword = "", ...)
+otConnect(host = "delayed1.opentick.com", port = 10015, ...)
 }
 \arguments{
   \item{host}{ Hostname of server to connect to; must align with \code{port} argument. }
   \item{port}{ Port number of server to connect to; must align with \code{host} argument. }
-  \item{platform}{ Platform Code. }
-  \item{platformPassword}{ Platform Password. }
   \item{\dots}{ Further arguments to connection object (not currently implemented). }
 }
 \details{

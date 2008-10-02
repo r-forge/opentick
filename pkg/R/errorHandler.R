@@ -10,7 +10,6 @@ function(header, body, ok=NULL, customMessage=FALSE) {
     
     error <- unpack('v v/A', body)
     names(error) <- c('value','description')
-    error[[2]] <- gsub('\0', '', error[[2]])
 
     if(error[[1]] %in% ok) {
       return()
