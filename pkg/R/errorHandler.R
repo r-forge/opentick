@@ -32,3 +32,49 @@ function() {
     stop('Not logged in', call.=FALSE)
   }
 }
+
+'connected' <-
+function(stop=TRUE) {
+  open <- TRUE
+  debug <- FALSE
+  
+  # Check if server is listening on connection
+  if(open) {
+    suppressWarnings({
+      canWrite <- socketSelect(list(getSocket()), write=TRUE, timeout=1)
+    })
+    if(debug) cat('open1',canWrite,'\n')
+    if(!canWrite) open <- FALSE
+  }
+  # If we can write to connection, see if server accepts request
+  if(open) {
+    Sys.sleep(0.5)
+    canWrite <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)),silent=TRUE)
+    canWrite <- inherits(canWrite,'try-error')
+    if(debug) cat('open2',canWrite,'\n')
+    if(!canWrite) open <- FALSE
+  }
+  # Try again, because sometimes previous request causes
+  # server to drop connection
+  if(open) {
+    Sys.sleep(0.5)
+    canWrite <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)),silent=TRUE)
+    canWrite <- inherits(canWrite,'try-error')
+    if(debug) cat('open3',canWrite,'\n')
+    if(!canWrite) open <- FALSE
+  }
+  # See if server is still listening
+  if(open) {
+    suppressWarnings({
+      canWrite <- socketSelect(list(getSocket()), write=TRUE, timeout=3)
+    })
+    if(debug) cat('open4',canWrite,'\n')
+    if(!canWrite) open <- FALSE
+  }
+
+  if(stop) {
+    stop('Not Connected', call.=FALSE)
+  } else {
+    return(open)
+  }
+}

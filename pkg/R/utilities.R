@@ -43,3 +43,35 @@ function() {
   return(x$requestID)
 }
 
+'getSocket' <- function() {
+   x <- get('.otConnection',as.environment("package:opentick"))
+}
+
+'getParams' <- function() {
+   x <- get('.otParams',as.environment("package:opentick"))
+}
+
+'setParams' <- function(x) {
+  
+  # Get environment
+  env <- as.environment("package:opentick")
+  environment(x) <- env
+
+  # Check if binding locked; unlock if needed
+  locked <- bindingIsLocked('.otParams', env)
+  if(locked) {
+    unlockBinding('.otParams', env)
+  }
+  
+  # Assign new parameter to object
+  #assign('.otParams', { otp <- get('.otParams'); otp[param] <- value; otp }, env )
+  assign('.otParams', x, env)
+
+  # Re-lock, if needed
+  if(locked) {
+    suppressWarnings({
+      lockBinding('.otParams', env)
+    })
+   }
+  return(invisible(1))
+}

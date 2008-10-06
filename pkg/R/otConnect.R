@@ -57,65 +57,6 @@ function(host='delayed1.opentick.com', port=10015, ...) {
   return(invisible(1))
 }
 
-'.otReconnect' <-
-function() {
-
-  open <- TRUE
-  debug <- FALSE
-  
-  # Check if server is listening on connection
-  if(open) {
-    suppressWarnings({
-      canWrite <- socketSelect(list(getSocket()), write=TRUE, timeout=1)
-    })
-    if(debug) cat('open1',canWrite,'\n')
-    if(!canWrite) open <- FALSE
-  }
-  # If we can write to connection, see if server accepts request
-  if(open) {
-    Sys.sleep(0.5)
-    canWrite <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)),silent=TRUE)
-    canWrite <- inherits(canWrite,'try-error')
-    if(debug) cat('open2',canWrite,'\n')
-    if(!canWrite) open <- FALSE
-  }
-  # Try again, because sometimes previous request causes
-  # server to drop connection
-  if(open) {
-    Sys.sleep(0.5)
-    canWrite <- try(sendRequest(OT$HEARTBEAT, 0, raw(0)),silent=TRUE)
-    canWrite <- inherits(canWrite,'try-error')
-    if(debug) cat('open3',canWrite,'\n')
-    if(!canWrite) open <- FALSE
-  }
-  # See if server is still listening
-  if(open) {
-    suppressWarnings({
-      canWrite <- socketSelect(list(getSocket()), write=TRUE, timeout=3)
-    })
-    if(debug) cat('open4',canWrite,'\n')
-    if(!canWrite) open <- FALSE
-  }
-  # Reconnect, if connection is not open
-  if(!open) {
-    # Create connection parameters
-    otPar <- getParams()
-    # Make sure old connection is closed
-    .otDisconnect()
-    # Make a new connection
-    otConnect()
-    # Login to new connection
-    otLogin(otPar$username,otPar$password)
-  } else {
-    return(invisible())
-  }
-}
-
-'.otDisconnect' <-
-function() {
-  x <- try(close(getSocket()), silent=TRUE)
-}
-
 'otLogin' <-
 function(username=NULL, password=NULL) {
 
@@ -196,6 +137,31 @@ function() {
   return(invisible(1))
 }
 
+'.otReconnect' <-
+function() {
+
+  open <- connected(stop=FALSE)
+  
+  # Reconnect, if connection is not open
+  if(!open) {
+    # Create connection parameters
+    otPar <- getParams()
+    # Make sure old connection is closed
+    .otDisconnect()
+    # Make a new connection
+    otConnect()
+    # Login to new connection
+    otLogin(otPar$username,otPar$password)
+  } else {
+    return(invisible())
+  }
+}
+
+'.otDisconnect' <-
+function() {
+  x <- try(close(getSocket()), silent=TRUE)
+}
+
 '.otAddHost' <-
 function(host, port) {
 
@@ -212,10 +178,6 @@ function(host, port) {
 # Actual Socket Connection
 '.otConnection' <- list()
 
-'getSocket' <- function() {
-   x <- get('.otConnection',as.environment("package:opentick"))
-}
-
 # Socket Connection Parameters
 '.otParams' <- list(
   host=NULL,
@@ -230,32 +192,3 @@ function(host, port) {
   requestID=0,
   platform=NULL,
   platformPassword=NULL)
-
-'getParams' <- function() {
-   x <- get('.otParams',as.environment("package:opentick"))
-}
-
-'setParams' <- function(x) {
-  
-  # Get environment
-  env <- as.environment("package:opentick")
-  environment(x) <- env
-
-  # Check if binding locked; unlock if needed
-  locked <- bindingIsLocked('.otParams', env)
-  if(locked) {
-    unlockBinding('.otParams', env)
-  }
-  
-  # Assign new parameter to object
-  #assign('.otParams', { otp <- get('.otParams'); otp[param] <- value; otp }, env )
-  assign('.otParams', x, env)
-
-  # Re-lock, if needed
-  if(locked) {
-    suppressWarnings({
-      lockBinding('.otParams', env)
-    })
-   }
-  return(invisible(1))
-}
